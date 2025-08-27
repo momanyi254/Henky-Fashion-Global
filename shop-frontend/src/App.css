@@ -1,0 +1,94 @@
+
+.app-header {
+  display: flex;
+  justify-content: space-between; /* logo on left, nav on right */
+  align-items: center;
+  padding: 10px 20px;
+  background-color: #222;
+  color: #fff;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+}
+
+.header-logo {
+  height: 50px;
+  margin-right: 10px;
+}
+
+.header-title {
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.header-nav ul {
+  display: flex;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.header-nav li {
+  margin-left: 20px;
+}
+
+.header-nav a {
+  color: white;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.header-nav a:hover {
+  text-decoration: underline;
+}
+.app-footer {
+  text-align: center;
+  padding: 1rem;
+  background-color: #222;
+  color: #fff;
+  margin-top: 2rem;
+  position: relative; /* change to fixed if you want it always visible at bottom */
+  bottom: 0;
+  width: 100%;
+  font-size: 0.9rem;
+}
+.header-nav ul {
+  list-style: none;
+  display: flex;
+  gap: 20px;
+  align-items: center;
+}
+
+.header-nav li {
+  display: flex;
+  align-items: center;
+}
+
+.icon-link {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  text-decoration: none;
+  color: #333;
+}
+
+.icon-link:hover {
+  color: #007bff;
+}
+
+.icon-btn {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+  color: #333;
+}
+
+.icon-btn:hover {
+  color: red;
+}

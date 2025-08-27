@@ -1,0 +1,117 @@
+.home-container {
+  text-align: center;
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Hero Section */
+.hero {
+  margin: 40px 0;
+}
+
+.hero h2 {
+  font-size: 2rem;
+  margin-bottom: 10px;
+}
+
+.hero p {
+  font-size: 1.2rem;
+  color: #555;
+}
+
+/* Carousel Section */
+.carousel-section {
+  margin: 40px auto;
+  max-width: 800px;
+}
+
+.carousel-image {
+  width: 70%;          /* reduced size */
+  max-width: 500px;    /* prevent huge scaling */
+  height: 300px;       /* uniform height */
+  object-fit: cover;   /* crop neatly */
+  border-radius: 10px;
+  margin: 0 auto;      /* center inside carousel */
+  display: block;
+}
+
+/* Contact Section */
+.contact {
+  margin: 50px 0;
+}
+
+.contact h3 {
+  font-size: 1.5rem;
+  margin-bottom: 10px;
+}
+
+.contact a {
+  color: #0077cc;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.contact a:hover {
+  text-decoration: underline;
+}
+
+/* Partners Section */
+.partners {
+  margin: 50px 0;
+}
+
+.partners h3 {
+  font-size: 1.5rem;
+  margin-bottom: 15px;
+}
+
+.partners-logos {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin-top: 15px;
+  flex-wrap: wrap;
+}
+
+.partners-logos img {
+  width: 120px;
+  height: auto;
+  object-fit: contain;
+}
+
+/* Social Media Section */
+.social-media {
+  margin: 50px 0;
+}
+
+.social-media h3 {
+  font-size: 1.5rem;
+  margin-bottom: 15px;
+}
+
+.social-links {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
+
+.social-links a {
+  text-decoration: none;
+  color: #333;
+  font-weight: bold;
+  transition: color 0.3s;
+}
+
+.social-links a:hover {
+  color: #0077cc;
+}
+
+/* Footer */
+.footer {
+  background: #222;
+  color: white;
+  padding: 15px 0;
+  margin-top: 40px;
+  font-size: 0.9rem;
+}

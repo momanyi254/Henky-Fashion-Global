@@ -1,0 +1,264 @@
+.cart-page {
+  max-width: 900px;
+  margin: 40px auto;
+  padding: 0 20px;
+  font-family: Arial, sans-serif;
+}
+
+.cart-title {
+  text-align: center;
+  font-size: 2rem;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.empty-cart {
+  text-align: center;
+  font-size: 1.2rem;
+  color: #666;
+}
+
+.cart-items-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.cart-item {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  background: #fff;
+  padding: 15px;
+  margin-bottom: 15px;
+  border-radius: 10px;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+  transition: transform 0.2s;
+}
+
+.cart-item:hover {
+  transform: translateY(-3px);
+}
+
+.cart-item-image {
+  width: 120px;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+}
+
+.cart-item-details {
+  flex: 1;
+}
+
+.cart-item-name {
+  font-size: 1.2rem;
+  margin: 0 0 8px 0;
+  color: #111;
+}
+
+.cart-item-price,
+.cart-item-quantity {
+  margin: 3px 0;
+  color: #555;
+}
+
+.remove-btn {
+  margin-top: 10px;
+  padding: 6px 12px;
+  border: none;
+  background-color: #e74c3c;
+  color: #fff;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background-color 0.2s;
+}
+
+.remove-btn:hover {
+  background-color: #c0392b;
+}
+
+.clear-cart-btn {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  font-size: 1rem;
+  border: none;
+  background-color: #3498db;
+  color: #fff;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-top: 20px;
+  transition: background-color 0.2s;
+}
+
+.clear-cart-btn:hover {
+  background-color: #2980b9;
+}
+
+.loading,
+.error {
+  text-align: center;
+  font-size: 1.1rem;
+  color: #555;
+}
+/* Cart page */
+.cart-page {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: #f9f9f9;
+  border-radius: 10px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+/* Title */
+.cart-title {
+  text-align: center;
+  margin-bottom: 20px;
+  font-size: 2rem;
+  color: #333;
+}
+
+/* Cart Items List */
+.cart-items-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 20px 0;
+}
+
+.cart-item {
+  display: flex;
+  align-items: center;
+  background: #fff;
+  margin-bottom: 15px;
+  padding: 10px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.cart-item-image {
+  width: 120px;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-right: 15px;
+}
+
+.cart-item-details {
+  flex: 1;
+}
+
+.cart-item-name {
+  margin: 0;
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #222;
+}
+
+.cart-item-price,
+.cart-item-quantity,
+.cart-item-subtotal {
+  margin: 5px 0;
+  color: #555;
+}
+
+.remove-btn {
+  padding: 5px 10px;
+  background: #ff4d4f;
+  border: none;
+  color: #fff;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 5px;
+  transition: all 0.3s ease;
+}
+
+.remove-btn:hover {
+  background: #d9363e;
+}
+
+/* Cart summary section */
+.cart-summary {
+  background: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.cart-summary p {
+  font-size: 1.1rem;
+  color: #333;
+  margin: 0;
+}
+
+.cart-summary h3 {
+  margin: 0 0 10px 0;
+  font-size: 1.3rem;
+  color: #333;
+}
+
+/* Input fields */
+.cart-summary input,
+.cart-summary textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 1rem;
+  margin-bottom: 10px;
+}
+
+.cart-summary textarea {
+  resize: vertical;
+  min-height: 60px;
+}
+
+/* Buttons */
+.payment-btn,
+.clear-cart-btn {
+  padding: 12px 20px;
+  font-size: 1rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.payment-btn {
+  background: #28a745;
+  color: #fff;
+}
+
+.payment-btn:hover {
+  background: #218838;
+}
+
+.clear-cart-btn {
+  background: #ffc107;
+  color: #333;
+}
+
+.clear-cart-btn:hover {
+  background: #e0a800;
+}
+
+/* Empty cart message */
+.empty-cart {
+  text-align: center;
+  font-size: 1.2rem;
+  color: #777;
+}
+
+/* Loading and error messages */
+.loading, .error {
+  text-align: center;
+  font-size: 1.1rem;
+  color: #555;
+}

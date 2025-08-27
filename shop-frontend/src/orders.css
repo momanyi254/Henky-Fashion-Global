@@ -1,0 +1,116 @@
+/* Orders page container */
+.orders-page {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Title */
+.orders-title {
+  text-align: center;
+  font-size: 2rem;
+  margin-bottom: 25px;
+  color: #333;
+}
+
+/* Orders list */
+.orders-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.order-card {
+  background: #fff;
+  margin-bottom: 20px;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  transition: all 0.3s ease;
+}
+
+.order-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.12);
+}
+
+.order-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.order-id {
+  font-weight: bold;
+  color: #222;
+}
+
+.order-status {
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  color: #fff;
+  text-transform: uppercase;
+}
+
+.status-Pending { background: #ffc107; color: #333; }
+.status-Processing { background: #17a2b8; }
+.status-Shipped { background: #007bff; }
+.status-Delivered { background: #28a745; }
+.status-Cancelled { background: #dc3545; }
+
+/* Products in order */
+.order-products {
+  margin-top: 10px;
+  border-top: 1px solid #eee;
+  padding-top: 10px;
+}
+
+.order-product {
+  display: flex;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.order-product img {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 6px;
+  margin-right: 15px;
+}
+
+.product-details h4 {
+  margin: 0;
+  font-size: 1.1rem;
+  color: #222;
+}
+
+.product-details p {
+  margin: 3px 0;
+  color: #555;
+}
+
+/* Order totals */
+.order-totals {
+  margin-top: 10px;
+  font-weight: bold;
+  color: #333;
+  font-size: 1.1rem;
+}
+
+/* No orders message */
+.no-orders {
+  text-align: center;
+  font-size: 1.2rem;
+  color: #777;
+  margin-top: 30px;
+}
+
+/* Admin section: show user email if needed */
+.order-user-email {
+  font-size: 0.9rem;
+  color: #555;
+}
