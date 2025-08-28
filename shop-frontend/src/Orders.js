@@ -4,24 +4,29 @@ import "./orders.css";
 function Orders() {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
   const token = localStorage.getItem("token");
+  const role = localStorage.getItem("role");
 
+  // Fetch orders
   useEffect(() => {
     const fetchOrders = async () => {
       try {
         const res = await fetch("http://localhost:3000/orders", {
-          headers: { Authorization: `Bearer ${token}` },
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
         });
+
+        if (!res.ok) {
+          throw new Error("Failed to fetch orders");
+        }
+
         const data = await res.json();
-
-        if (!res.ok) return alert(data.message || "Failed to fetch orders");
-
-        // Flatten for admin object or keep array for normal users
-        if (Array.isArray(data)) setOrders(data);
-        else if (typeof data === "object") setOrders(Object.values(data).flat());
+        setOrders(data);
       } catch (err) {
-        console.error(err);
-        alert("Error fetching orders");
+        setError(err.message);
       } finally {
         setLoading(false);
       }
@@ -30,33 +35,113 @@ function Orders() {
     fetchOrders();
   }, [token]);
 
-  if (loading) return <p className="loading">Loading orders...</p>;
+  // Cancel order
+  const cancelOrder = async (id) => {
+    try {
+      const res = await fetch(`http://localhost:3000/orders/${id}/cancel`, {
+        method: "PATCH",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (!res.ok) throw new Error("Failed to cancel order");
+
+      const data = await res.json();
+
+      // Update UI immediately
+      setOrders((prev) =>
+        prev.map((order) => (order._id === id ? data.order : order))
+      );
+
+      alert("Order cancelled successfully. Items were returned to stock.");
+    } catch (err) {
+      alert(err.message);
+    }
+  };
+
+  // Admin updates order status
+  const updateStatus = async (id, status) => {
+    try {
+      const res = await fetch(`http://localhost:3000/orders/${id}/status`, {
+        method: "PATCH",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ status }),
+      });
+
+      if (!res.ok) throw new Error("Failed to update status");
+
+      const data = await res.json();
+
+      setOrders((prev) =>
+        prev.map((order) => (order._id === id ? data.order : order))
+      );
+    } catch (err) {
+      alert(err.message);
+    }
+  };
+
+  if (loading) return <p>Loading orders...</p>;
+  if (error) return <p style={{ color: "red" }}>{error}</p>;
 
   return (
-    <div className="orders-page">
-      <h2>My Orders</h2>
+    <div className="orders-container">
+      <h2>Your Orders</h2>
       {orders.length === 0 ? (
-        <p>No orders yet.</p>
+        <p>No orders found.</p>
       ) : (
-        orders.map((order) => (
-          <div key={order._id} className="order-card">
-            <div className="order-header">
-              <p><strong>Order ID:</strong> {order._id}</p>
-              <p><strong>Date:</strong> {new Date(order.createdAt).toLocaleString()}</p>
-              <p><strong>Status:</strong> {order.status}</p>
-              <p><strong>Total Price:</strong> ${order.totalPrice.toFixed(2)}</p>
-            </div>
-            <ul className="order-items">
-              {order.products.map((item, idx) => (
-                <li key={idx} className="order-item">
-                  {item.productId
-                    ? `${item.productId.name} x ${item.quantity} - $${item.productId.price.toFixed(2)}`
-                    : `Product removed x ${item.quantity}`}
-                </li>
-              ))}
-            </ul>
-          </div>
-        ))
+        <table>
+          <thead>
+            <tr>
+              <th>Order #</th>
+              <th>Products</th>
+              <th>Total</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {orders.map((order, index) => (
+              <tr key={order._id}>
+                <td>{index + 1}</td>
+                <td>
+                  {order.products.map((p, i) => (
+                    <div key={i}>
+                      {p.productId?.name} (x{p.quantity})
+                    </div>
+                  ))}
+                </td>
+                <td>${order.totalPrice}</td>
+                <td>{order.status}</td>
+                <td>
+                  {order.status === "Pending" && (
+                    <button onClick={() => cancelOrder(order._id)}>
+                      Cancel
+                    </button>
+                  )}
+                  {role === "admin" && (
+                    <select
+                      value={order.status}
+                      onChange={(e) =>
+                        updateStatus(order._id, e.target.value)
+                      }
+                    >
+                      <option value="Pending">Pending</option>
+                      <option value="Processing">Processing</option>
+                      <option value="Shipped">Shipped</option>
+                      <option value="Delivered">Delivered</option>
+                      <option value="Cancelled">Cancelled</option>
+                    </select>
+                  )}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       )}
     </div>
   );

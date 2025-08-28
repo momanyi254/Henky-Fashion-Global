@@ -6,7 +6,6 @@ import countries from "./countries";
 function Signup() {
   const navigate = useNavigate(); 
 
-  // Form data state
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -18,25 +17,19 @@ function Signup() {
     country: "",
   });
 
-  // Loading state while submitting
   const [loading, setLoading] = useState(false);
-
-  // Message to show success/error
   const [message, setMessage] = useState("");
 
-  // Handle input changes
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setMessage("");
 
     try {
-      // Send POST request to backend signup endpoint
       const res = await fetch("http://localhost:3000/users/signup", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -46,12 +39,8 @@ function Signup() {
       const data = await res.json();
 
       if (res.ok) {
-        // ✅ If backend returns token, save it in localStorage
-        if (data.token) {
-          localStorage.setItem("token", data.token);
-        }
+        if (data.token) localStorage.setItem("token", data.token);
 
-        // ✅ Save basic user info in localStorage
         localStorage.setItem(
           "user",
           JSON.stringify({
@@ -61,10 +50,8 @@ function Signup() {
           })
         );
 
-        // ✅ Redirect user to products page after successful signup
         navigate("/products");
       } else {
-        // Show error message returned from backend
         setMessage(data.message || "Signup failed");
       }
     } catch (error) {
@@ -82,6 +69,7 @@ function Signup() {
 
         {message && <p className="message">{message}</p>}
 
+        {/* Row: First & Last Name */}
         <div className="row">
           <input
             type="text"
@@ -119,56 +107,63 @@ function Signup() {
           required
         />
 
-        <input
-          type="tel"
-          name="phone"
-          placeholder="Phone Number"
-          value={formData.phone}
-          onChange={handleChange}
-        />
+        {/* Row: Phone & Age */}
+        <div className="row">
+          <input
+            type="tel"
+            name="phone"
+            placeholder="Phone Number"
+            value={formData.phone}
+            onChange={handleChange}
+          />
+          <input
+            type="number"
+            name="age"
+            placeholder="Age"
+            value={formData.age}
+            onChange={handleChange}
+            min="16"
+          />
+        </div>
 
-        <input
-          type="number"
-          name="age"
-          placeholder="Age"
-          value={formData.age}
-          onChange={handleChange}
-          min="16"
-        />
+        {/* Row: Region & Country */}
+        <div className="row">
+          <select
+            name="region"
+            value={formData.region}
+            onChange={handleChange}
+            required
+          >
+            <option value="">Select Region</option>
+            <option>Africa</option>
+            <option>Asia</option>
+            <option>Europe</option>
+            <option>North America</option>
+            <option>South America</option>
+            <option>Oceania</option>
+            <option>Antarctica</option>
+          </select>
 
-        <select
-          name="region"
-          value={formData.region}
-          onChange={handleChange}
-          required
-        >
-          <option value="">Select Region</option>
-          <option>Africa</option>
-          <option>Asia</option>
-          <option>Europe</option>
-          <option>North America</option>
-          <option>South America</option>
-          <option>Oceania</option>
-          <option>Antarctica</option>
-        </select>
-
-        <select
-          name="country"
-          value={formData.country}
-          onChange={handleChange}
-          required
-        >
-          <option value="">Select Country</option>
-          {countries.map((c, idx) => (
-            <option key={idx} value={c}>
-              {c}
-            </option>
-          ))}
-        </select>
+          <select
+            name="country"
+            value={formData.country}
+            onChange={handleChange}
+            required
+          >
+            <option value="">Select Country</option>
+            {countries.map((c, idx) => (
+              <option key={idx} value={c}>{c}</option>
+            ))}
+          </select>
+        </div>
 
         <button type="submit" disabled={loading}>
           {loading ? "Signing up..." : "Sign Up"}
         </button>
+
+        <p className="login-link">
+          Already have an account? <a href="/login">Log in here</a>
+        </p>
       </form>
     </div>
   );

@@ -1,116 +1,157 @@
-/* Orders page container */
-.orders-page {
-  max-width: 1000px;
-  margin: 0 auto;
+/* ==========================
+   Orders page — styles
+   Matches: .orders-container + plain <table> markup
+   ========================== */
+
+/* Container */
+.orders-container {
+  max-width: 1100px;
+  margin: 18px auto;
   padding: 20px;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #222;
 }
 
-/* Title */
-.orders-title {
-  text-align: center;
-  font-size: 2rem;
-  margin-bottom: 25px;
+/* Page title (h2 inside container) */
+.orders-container h2 {
+  text-align: left;
+  font-size: 1.6rem;
+  margin: 0 0 16px 0;
+  color: #111;
+  font-weight: 600;
+}
+
+/* Table wrapper behavior (horizontal scroll on very small screens) */
+.orders-container table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 12px;
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  border-radius: 8px;
+  overflow: hidden;
+  display: block;
+  width: 100%;
+  overflow-x: auto;
+}
+
+/* Table cells */
+.orders-container table thead th {
+  background: #f6f7f9;
+  font-weight: 600;
+  padding: 12px 14px;
+  text-align: left;
+  font-size: 0.95rem;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.orders-container table tbody td {
+  padding: 12px 14px;
+  border-bottom: 1px solid #f1f3f5;
+  vertical-align: top;
+  font-size: 0.95rem;
   color: #333;
 }
 
-/* Orders list */
-.orders-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
+/* Align the Total column to the right (4th column) */
+.orders-container table tbody td:nth-child(3),
+.orders-container table thead th:nth-child(3) {
+  text-align: left; /* products column is 2nd; keep left */
 }
 
+/* Make last column (actions) smaller */
+.orders-container table thead th:last-child,
+.orders-container table tbody td:last-child {
+  width: 180px;
+  white-space: nowrap;
+}
+
+/* Hover row */
+.orders-container table tbody tr:hover {
+  background: #fbfcfd;
+}
+
+/* Product list inside a cell */
+.orders-container table tbody td div {
+  margin-bottom: 6px;
+  color: #444;
+  font-size: 0.94rem;
+}
+
+/* Numeric / price styling */
+.orders-container .price {
+  font-weight: 600;
+  color: #111;
+}
+
+/* Buttons inside table */
+.orders-container td button {
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: transform .08s ease, box-shadow .08s ease;
+}
+
+/* Cancel button look (this applies to the cancel action in your markup) */
+.orders-container td button {
+  background: #ff4d4d;
+  color: #fff;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+}
+.orders-container td button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+}
+
+/* Admin select (status dropdown) */
+.orders-container select {
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid #d1d7dc;
+  background: #fff;
+  font-size: 0.95rem;
+}
+
+/* Empty / no orders message */
+.orders-container p {
+  margin: 12px 0;
+  color: #666;
+}
+
+/* Loading & error states */
+.loading, .orders-container .loading {
+  color: #666;
+  font-style: italic;
+}
+.orders-container .error, .error {
+  color: #b00020;
+  font-weight: 600;
+}
+
+/* Small screens: make rows stack visually (keeps table scrollable) */
+@media (max-width: 720px) {
+  .orders-container {
+    padding: 14px;
+  }
+
+  .orders-container table thead th,
+  .orders-container table tbody td {
+    padding: 10px 12px;
+    font-size: 0.92rem;
+  }
+
+  .orders-container table tbody td:last-child {
+    text-align: right;
+  }
+}
+
+/* Optional — subtle card fallback if you later switch to card view */
 .order-card {
   background: #fff;
-  margin-bottom: 20px;
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-  transition: all 0.3s ease;
-}
-
-.order-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(0,0,0,0.12);
-}
-
-.order-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 10px;
-}
-
-.order-id {
-  font-weight: bold;
-  color: #222;
-}
-
-.order-status {
-  padding: 4px 10px;
-  border-radius: 6px;
-  font-size: 0.9rem;
-  color: #fff;
-  text-transform: uppercase;
-}
-
-.status-Pending { background: #ffc107; color: #333; }
-.status-Processing { background: #17a2b8; }
-.status-Shipped { background: #007bff; }
-.status-Delivered { background: #28a745; }
-.status-Cancelled { background: #dc3545; }
-
-/* Products in order */
-.order-products {
-  margin-top: 10px;
-  border-top: 1px solid #eee;
-  padding-top: 10px;
-}
-
-.order-product {
-  display: flex;
-  align-items: center;
-  margin-bottom: 12px;
-}
-
-.order-product img {
-  width: 80px;
-  height: 80px;
-  object-fit: cover;
-  border-radius: 6px;
-  margin-right: 15px;
-}
-
-.product-details h4 {
-  margin: 0;
-  font-size: 1.1rem;
-  color: #222;
-}
-
-.product-details p {
-  margin: 3px 0;
-  color: #555;
-}
-
-/* Order totals */
-.order-totals {
-  margin-top: 10px;
-  font-weight: bold;
-  color: #333;
-  font-size: 1.1rem;
-}
-
-/* No orders message */
-.no-orders {
-  text-align: center;
-  font-size: 1.2rem;
-  color: #777;
-  margin-top: 30px;
-}
-
-/* Admin section: show user email if needed */
-.order-user-email {
-  font-size: 0.9rem;
-  color: #555;
+  margin-bottom: 16px;
+  padding: 14px;
+  border-radius: 8px;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.04);
 }

@@ -4,145 +4,118 @@ const Order = require("../../model/order");
 const mongoose = require('mongoose');
 const checkAuth = require("../middleware/checkAuth");
 
-// GET all orders for logged in user
-route.get("/",checkAuth, async (req, res, next) => {
+// import Product model
+const Product = require("../../model/product");
+
+route.post("/", checkAuth, async (req, res, next) => {
   try {
-    if (req.userData.role === "admin") {
-      // Admin gets all orders grouped by user
-      const orders = await Order.find()
-        .populate("products.productId")
-        .populate("user", "email")
-        .sort({ createdAt: -1 });
+    const { products, totalPrice } = req.body;
 
-      // Group by user email
-      const groupedOrders = orders.reduce((acc, order) => {
-        const userEmail = order.user?.email || "Unknown User";
-        if (!acc[userEmail]) {
-          acc[userEmail] = [];
-        }
-        acc[userEmail].push(order);
-        return acc;
-      }, {});
-
-      return res.status(200).json(groupedOrders);
-    } else {
-      // Regular user gets only their own orders
-      const orders = await Order.find({ user: req.userData.userId })
-        .populate("products.productId")
-        .sort({ createdAt: -1 });
-
-      return res.status(200).json(orders);
+    if (!products || products.length === 0) {
+      return res.status(400).json({ message: "No products in order." });
     }
-  } catch (err) {
-    next(err);
-  }
-});
-// POST new order (logged in user only)
-route.post('/', checkAuth, async (req, res, next) => {
-  try {
-    const order = new Order({
-      ...req.body,
-      user: req.userData.userId // tie order to logged-in user
+
+    const newOrder = new Order({
+      user: req.userData.userId,
+      products,
+      totalPrice,
     });
 
-    const savedOrder = await order.save();
+    const savedOrder = await newOrder.save();
+
     res.status(201).json({
-      message: 'Order placed successfully',
+      message: "Order placed successfully.",
       order: savedOrder,
     });
   } catch (err) {
-    if (err.code === 11000 && err.keyPattern && err.keyPattern.uniqueOrderHash) {
-      err.status = 409; // Conflict
-      err.message = 'Duplicate order detected.';
-    } else if (err.name === 'ValidationError') {
-      err.status = 400;
-    }
     next(err);
   }
 });
 
-// GET single order (must belong to logged in user)
-route.get('/:id', checkAuth, async (req, res, next) => {
-  const { id } = req.params;
-
-  if (!mongoose.Types.ObjectId.isValid(id)) {
-    return res.status(400).json({ message: 'Invalid order ID format.' });
-  }
-
+/**
+ * @route GET /orders
+ * @desc Get orders for logged in user (or all orders if admin)
+ */
+route.get("/", checkAuth, async (req, res, next) => {
   try {
-    const order = await Order.findOne({ _id: id, user: req.userData.userId })
-                             .populate('products.productId');
-
-    if (!order) {
-      return res.status(404).json({ message: 'Order not found or not yours.' });
-    }
-
-    res.status(200).json(order);
-  } catch (err) {
-    next(err);
-  }
-});
-
-// PATCH update order (must belong to logged in user)
-route.patch('/:id', checkAuth, async (req, res, next) => {
-  const { id } = req.params;
-  const updates = req.body;
-
-  if (!mongoose.Types.ObjectId.isValid(id)) {
-    return res.status(400).json({ message: 'Invalid order ID format.' });
-  }
-
-  try {
-    const updatedOrder = await Order.findOneAndUpdate(
-      { _id: id, user: req.userData.userId }, 
-      updates, 
-      { new: true, runValidators: true }
-    );
-
-    if (!updatedOrder) {
-      return res.status(404).json({ message: 'Order not found or not yours.' });
-    }
-
-    res.status(200).json({
-      message: 'Order updated successfully.',
-      order: updatedOrder
-    });
-  } catch (err) {
-    next(err);
-  }
-});
-
-// DELETE order (must belong to logged in user)
-// DELETE - Delete order by ID
-route.delete("/:id",checkAuth, async (req, res, next) => {
-  const { id } = req.params;
-
-  if (!mongoose.Types.ObjectId.isValid(id)) {
-    return res.status(400).json({ message: "Invalid order ID format." });
-  }
-
-  try {
-    let order;
+    let orders;
 
     if (req.userData.role === "admin") {
-      // Admin can delete any order
-      order = await Order.findByIdAndDelete(id);
+      orders = await Order.find()
+        .populate("user", "email")
+        .populate("products.productId", "name price");
     } else {
-      // User can delete only their own order
-      order = await Order.findOneAndDelete({
-        _id: id,
-        user: req.userData.userId,
-      });
+      orders = await Order.find({ user: req.userData.userId })
+        .populate("products.productId", "name price");
     }
 
-    if (!order) {
-      return res.status(404).json({ message: "Order not found or not authorized." });
+    res.json(orders);
+  } catch (err) {
+    next(err);
+  }
+});
+
+/**
+ * @route PATCH /orders/:id/status
+ * @desc Admin updates order status
+ */
+route.patch("/:id/status", checkAuth, async (req, res, next) => {
+  try {
+    if (req.userData.role !== "admin") {
+      return res.status(403).json({ message: "Not authorized." });
     }
 
-    return res.status(200).json({
-      message: "Order deleted successfully.",
-      order,
-    });
+    const { status } = req.body;
+
+    if (!["Pending", "Processing", "Shipped", "Delivered", "Cancelled"].includes(status)) {
+      return res.status(400).json({ message: "Invalid status value." });
+    }
+
+    const order = await Order.findByIdAndUpdate(
+      req.params.id,
+      { status },
+      { new: true }
+    );
+
+    if (!order) return res.status(404).json({ message: "Order not found." });
+
+    res.json({ message: "Order status updated.", order });
+  } catch (err) {
+    next(err);
+  }
+});
+
+/**
+ * @route PATCH /orders/:id/cancel
+ * @desc User cancels their own order (only if still Pending)
+ */
+route.patch("/:id/cancel", checkAuth, async (req, res, next) => {
+  try {
+    const order = await Order.findOne({
+      _id: req.params.id,
+      user: req.userData.userId,
+    }).populate("products.productId");
+
+    if (!order) return res.status(404).json({ message: "Order not found." });
+
+    if (order.status !== "Pending") {
+      return res.status(400).json({ message: "Only pending orders can be cancelled." });
+    }
+
+    // restore stock for each product in the cancelled order
+    for (const item of order.products) {
+      if (item.productId) {
+        await Product.findByIdAndUpdate(
+          item.productId._id,
+          { $inc: { stock: item.quantity } }
+        );
+      }
+    }
+
+    order.status = "Cancelled";
+    await order.save();
+
+    res.json({ message: "Order cancelled successfully. Stock restored.", order });
   } catch (err) {
     next(err);
   }

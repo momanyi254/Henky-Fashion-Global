@@ -5,11 +5,13 @@ import Login from "./Login";
 import Products from "./Products";
 import Orders from "./Orders";
 import Cart from "./Cart";
+import Home from "./Home";
 import "./App.css";
 
 function App() {
   const [token, setToken] = useState(localStorage.getItem("token"));
   const [user, setUser] = useState(JSON.parse(localStorage.getItem("user")));
+  const [activeSection, setActiveSection] = useState("about"); // section for Home dropdown
 
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -33,6 +35,16 @@ function App() {
             <ul>
               {!token ? (
                 <>
+                  {/* Home dropdown */}
+                  <li className="dropdown-nav">
+                    <select value={activeSection} onChange={(e) => setActiveSection(e.target.value)}>
+                      <option value="about">About Us</option>
+                      <option value="vision">Vision & Mission</option>
+                      <option value="staff">Staff</option>
+                      <option value="careers">Careers</option>
+                      <option value="contact">Contact</option>
+                    </select>
+                  </li>
                   <li><Link to="/">Home</Link></li>
                   <li><Link to="/signup">Signup</Link></li>
                   <li><Link to="/login">Login</Link></li>
@@ -57,19 +69,12 @@ function App() {
         {/* Main */}
         <main className="app-main">
           <Routes>
-            <Route path="/" element={!token ? <h2>Welcome!</h2> : <Navigate to="/orders" />} />
+            <Route path="/" element={<Home activeSection={activeSection} />} />
             <Route path="/signup" element={!token ? <Signup /> : <Navigate to="/orders" />} />
-            <Route
-              path="/login"
-              element={
-                !token ? <Login setToken={setToken} setUser={setUser} /> : <Navigate to="/orders" />
-              }
-            />
-
-            <Route path="/products" element={token ? <Products /> : <Navigate to="/login" />} />
+            <Route path="/login" element={!token ? <Login setToken={setToken} setUser={setUser} /> : <Navigate to="/orders" />} />
+            <Route path="/products" element={<Products />} />
             <Route path="/orders" element={token ? <Orders /> : <Navigate to="/login" />} />
             <Route path="/cart" element={token ? <Cart /> : <Navigate to="/login" />} />
-
             <Route path="*" element={<h2>404 - Page Not Found</h2>} />
           </Routes>
         </main>

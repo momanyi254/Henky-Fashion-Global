@@ -1,6 +1,5 @@
 const express = require('express');
 const router = express.Router();
-const mongoose = require('mongoose');
 const checkAuth = require('../middleware/checkAuth');
 const Cart = require('../../model/cart');
 const Product = require('../../model/product');
@@ -9,11 +8,13 @@ const Product = require('../../model/product');
 // GET current user's cart
 // =========================
 router.get('/', checkAuth, async (req, res) => {
+  res.set('Cache-Control', 'no-store'); // prevent browser caching
   try {
-    const cart = await Cart.findOne({ user: req.userData.userId })
-      .populate('items.productId');
-    if (!cart) return res.status(200).json({ items: [] });
-
+    let cart = await Cart.findOne({ user: req.userData.userId }).populate('items.productId');
+    if (!cart) {
+      cart = new Cart({ user: req.userData.userId, items: [] });
+      await cart.save();
+    }
     res.status(200).json(cart);
   } catch (err) {
     res.status(500).json({ message: 'Server error', err });
@@ -24,6 +25,7 @@ router.get('/', checkAuth, async (req, res) => {
 // ADD product to cart
 // =========================
 router.post('/add', checkAuth, async (req, res) => {
+  res.set('Cache-Control', 'no-store');
   const { productId, quantity = 1 } = req.body;
 
   try {
@@ -31,9 +33,6 @@ router.post('/add', checkAuth, async (req, res) => {
     if (!product || product.stock < quantity) {
       return res.status(400).json({ message: 'Product not available in requested quantity' });
     }
-
-    product.stock -= quantity;
-    await product.save();
 
     let cart = await Cart.findOne({ user: req.userData.userId });
     if (!cart) cart = new Cart({ user: req.userData.userId, items: [] });
@@ -45,7 +44,10 @@ router.post('/add', checkAuth, async (req, res) => {
       cart.items.push({ productId, quantity });
     }
 
+    product.stock -= quantity;
+    await product.save();
     await cart.save();
+
     res.status(200).json({ message: 'Added to cart', cart });
   } catch (err) {
     res.status(500).json({ message: 'Server error', err });
@@ -56,6 +58,7 @@ router.post('/add', checkAuth, async (req, res) => {
 // REMOVE product from cart
 // =========================
 router.post('/remove', checkAuth, async (req, res) => {
+  res.set('Cache-Control', 'no-store');
   const { productId, quantity = 1 } = req.body;
 
   try {
@@ -68,11 +71,13 @@ router.post('/remove', checkAuth, async (req, res) => {
     const item = cart.items[itemIndex];
     const product = await Product.findById(productId);
 
-    product.stock += quantity; // restore stock
-    await product.save();
-
     item.quantity -= quantity;
     if (item.quantity <= 0) cart.items.splice(itemIndex, 1);
+
+    if (product) {
+      product.stock += quantity; // restore stock
+      await product.save();
+    }
 
     await cart.save();
     res.status(200).json({ message: 'Removed from cart', cart });
@@ -85,11 +90,11 @@ router.post('/remove', checkAuth, async (req, res) => {
 // CLEAR cart
 // =========================
 router.post('/clear', checkAuth, async (req, res) => {
+  res.set('Cache-Control', 'no-store');
   try {
     const cart = await Cart.findOne({ user: req.userData.userId });
     if (!cart) return res.status(404).json({ message: 'Cart not found' });
 
-    // Restore all stock
     for (const item of cart.items) {
       const product = await Product.findById(item.productId);
       if (product) {

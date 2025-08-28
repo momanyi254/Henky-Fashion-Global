@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import "./signup.css";
+import "./signup.css"; // Reuse the same CSS as Signup
 
 function Login({ setToken, setUser }) {
   const navigate = useNavigate();
@@ -41,7 +41,7 @@ function Login({ setToken, setUser }) {
       setToken(data.token);
       setUser(data.user);
 
-      // Navigate to orders page
+      // Navigate to orders or products page
       navigate("/orders");
     } catch (err) {
       console.error("Login error:", err);
@@ -53,32 +53,36 @@ function Login({ setToken, setUser }) {
 
   return (
     <div className="signup-container">
-      <div className="signup-form">
+      <form className="signup-form" onSubmit={handleSubmit}>
         <h2>Login</h2>
+
         {message && <p className="message">{message}</p>}
 
-        <form onSubmit={handleSubmit}>
-          <input
-            type="email"
-            name="email"
-            placeholder="Email Address"
-            value={formData.email}
-            onChange={handleChange}
-            required
-          />
-          <input
-            type="password"
-            name="password"
-            placeholder="Password"
-            value={formData.password}
-            onChange={handleChange}
-            required
-          />
-          <button type="submit" disabled={loading}>
-            {loading ? "Logging in..." : "Login"}
-          </button>
-        </form>
-      </div>
+        <input
+          type="email"
+          name="email"
+          placeholder="Email Address"
+          value={formData.email}
+          onChange={handleChange}
+          required
+        />
+        <input
+          type="password"
+          name="password"
+          placeholder="Password"
+          value={formData.password}
+          onChange={handleChange}
+          required
+        />
+
+        <button type="submit" disabled={loading}>
+          {loading ? "Logging in..." : "Login"}
+        </button>
+
+        <p className="login-link">
+          Don't have an account? <a href="/signup">Sign up here</a>
+        </p>
+      </form>
     </div>
   );
 }
